@@ -1,8 +1,9 @@
 import pytest
 import requests
+from lib.base_case import BaseCase
 
 
-class TestUserAuth:
+class TestUserAuth(BaseCase):
     exclude_params = [
         ('no_cookie'),
         ('no_token')
@@ -17,13 +18,9 @@ class TestUserAuth:
 
         response_1 = requests.post(url_1, data=data)
 
-        assert 'auth_sid' in response_1.cookies, 'There is no auth cookie in the response'
-        assert 'x-csrf-token' in response_1.headers, 'There is no CSRF token header in the response'
-        assert 'user_id' in response_1.json(), 'There is no user id in the first response'
-
-        self.auth_sid = response_1.cookies.get('auth_sid')
-        self.token = response_1.headers.get('x-csrf-token')
-        self.user_id_from_auth_method = response_1.json()['user_id']
+        self.auth_sid = self.get_cookie(response_1, 'auth_sid')
+        self.token = self.get_header(response_1, 'x-csrf-token')
+        self.user_id_from_auth_method = self.get_json_value(response_1, 'user_id')
 
     def test_auth_user(self):
         response_2 = requests.get(
