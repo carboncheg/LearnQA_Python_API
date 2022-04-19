@@ -49,7 +49,8 @@ class TestUserRegister(BaseCase):
 
         # Проверка на существующий email
         Assertions.assert_code_status(response, 400)
-        assert response.content.decode('utf-8') == f"Users with email '{email}' already exists", f'Unexpected status code {response.content}'
+        assert response.content.decode('utf-8') == f"Users with email '{email}' already exists", \
+            f'Unexpected status code {response.content}'
 
     def test_create_user_with_incorrect_email(self):
         incorrect_email = 'vinkotovexample.com'
@@ -63,6 +64,7 @@ class TestUserRegister(BaseCase):
 
         response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
 
+        # Проверка на некорректный email
         Assertions.assert_code_status(response, 400)
         assert response.content.decode('utf-8') == f'Invalid email format', \
             f"Unexpected response content: '{response.content}'"
@@ -80,7 +82,25 @@ class TestUserRegister(BaseCase):
 
         response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
 
+        # Проверка на отсутствие одного из требуемых полей
         Assertions.assert_code_status(response, 400)
         assert response.content.decode('utf-8') == f"The following required params are missed: {missed_field}", \
             f"The following required params are missed: '{missed_field}'"
+
+    def test_create_user_with_too_short_name(self):
+        data = {
+            'password': '123',
+            'username': 'learnqa',
+            'firstName': 'learnqa',
+            'lastName': 'learnqa',
+            'email': self.email
+        }
+        data['username'] = 'u'
+
+        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+
+        # Проверка на очень короткий username
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode('utf-8') == f"The value of 'username' field is too short", \
+            f"The value of 'username' field is too short"
 
