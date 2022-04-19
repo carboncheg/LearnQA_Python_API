@@ -1,7 +1,6 @@
 import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
-from datetime import datetime
 import pytest
 import string
 import random
@@ -15,39 +14,22 @@ class TestUserRegister(BaseCase):
         ("lastName"),
         ("email")
     ]
-
-    def setup(self):
-        base_part = 'learnqa'
-        domain = 'example.com'
-        random_part = datetime.now().strftime('%m%d%Y%H%M%S')
-        self.email = f'{base_part}{random_part}@{domain}'
+    url = 'https://playground.learnqa.ru/api/user/'
 
     def test_create_user_successfully(self):
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
+        data = self.prepare_registration_data()
 
-        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        response = requests.post(self.url, data=data)
 
-        # Проверка на нового юзера
+        # Проверка на успешное создание нового юзера
         Assertions.assert_code_status(response, 200)
         Assertions.assert_json_has_key(response, 'id')
 
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': email
-        }
+        data = self.prepare_registration_data(email)
 
-        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        response = requests.post(self.url, data=data)
 
         # Проверка на существующий email
         Assertions.assert_code_status(response, 400)
@@ -56,15 +38,9 @@ class TestUserRegister(BaseCase):
 
     def test_create_user_with_incorrect_email(self):
         incorrect_email = 'vinkotovexample.com'
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': incorrect_email
-        }
+        data = self.prepare_registration_data(incorrect_email)
 
-        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        response = requests.post(self.url, data=data)
 
         # Проверка на некорректный email
         Assertions.assert_code_status(response, 400)
@@ -73,16 +49,10 @@ class TestUserRegister(BaseCase):
 
     @pytest.mark.parametrize('missed_field', excluded_params)
     def test_create_user_without_one_params(self, missed_field):
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
+        data = self.prepare_registration_data()
         del data[f"{missed_field}"]
 
-        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        response = requests.post(self.url, data=data)
 
         # Проверка на отсутствие одного из требуемых полей
         Assertions.assert_code_status(response, 400)
@@ -90,16 +60,10 @@ class TestUserRegister(BaseCase):
             f"The following required params are missed: '{missed_field}'"
 
     def test_create_user_with_too_short_name(self):
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
+        data = self.prepare_registration_data()
         data['username'] = 'u'
 
-        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        response = requests.post(self.url, data=data)
 
         # Проверка на очень короткий username
         Assertions.assert_code_status(response, 400)
@@ -110,16 +74,10 @@ class TestUserRegister(BaseCase):
         letter = string.ascii_lowercase
         name_length = 251
         random_string = ''.join(random.choice(letter) for _ in range(name_length))
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
+        data = self.prepare_registration_data()
         data["username"] = random_string
 
-        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        response = requests.post(self.url, data=data)
 
         # Проверка на очень длинный username
         Assertions.assert_code_status(response, 400)
