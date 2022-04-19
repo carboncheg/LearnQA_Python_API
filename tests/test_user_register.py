@@ -2,9 +2,18 @@ import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from datetime import datetime
+import pytest
 
 
 class TestUserRegister(BaseCase):
+    excluded_params = [
+        ("password"),
+        ("username"),
+        ("firstName"),
+        ("lastName"),
+        ("email")
+    ]
+
     def setup(self):
         base_part = 'learnqa'
         domain = 'example.com'
@@ -57,4 +66,21 @@ class TestUserRegister(BaseCase):
         Assertions.assert_code_status(response, 400)
         assert response.content.decode('utf-8') == f'Invalid email format', \
             f"Unexpected response content: '{response.content}'"
+
+    @pytest.mark.parametrize('missed_field', excluded_params)
+    def test_create_user_without_one_params(self, missed_field):
+        data = {
+            'password': '123',
+            'username': 'learnqa',
+            'firstName': 'learnqa',
+            'lastName': 'learnqa',
+            'email': self.email
+        }
+        del data[f"{missed_field}"]
+
+        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode('utf-8') == f"The following required params are missed: {missed_field}", \
+            f"The following required params are missed: '{missed_field}'"
 
