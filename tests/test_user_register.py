@@ -3,6 +3,8 @@ from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from datetime import datetime
 import pytest
+import string
+import random
 
 
 class TestUserRegister(BaseCase):
@@ -104,3 +106,22 @@ class TestUserRegister(BaseCase):
         assert response.content.decode('utf-8') == f"The value of 'username' field is too short", \
             f"The value of 'username' field is too short"
 
+    def test_create_user_with_too_long_name(self):
+        letter = string.ascii_lowercase
+        name_length = 251
+        random_string = ''.join(random.choice(letter) for _ in range(name_length))
+        data = {
+            'password': '123',
+            'username': 'learnqa',
+            'firstName': 'learnqa',
+            'lastName': 'learnqa',
+            'email': self.email
+        }
+        data["username"] = random_string
+
+        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+
+        # Проверка на очень длинный username
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode('utf-8') == f"The value of 'username' field is too long", \
+            f"The value of 'username' field is too long"
