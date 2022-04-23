@@ -1,4 +1,4 @@
-import requests
+from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 import pytest
@@ -14,12 +14,12 @@ class TestUserRegister(BaseCase):
         ("lastName"),
         ("email")
     ]
-    url = 'https://playground.learnqa.ru/api/user/'
+    url = '/user'
 
     def test_create_user_successfully(self):
         data = self.prepare_registration_data()
 
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
 
         # Проверка на успешное создание нового юзера
         Assertions.assert_code_status(response, 200)
@@ -29,7 +29,7 @@ class TestUserRegister(BaseCase):
         email = 'vinkotov@example.com'
         data = self.prepare_registration_data(email)
 
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
 
         # Проверка на существующий email
         Assertions.assert_code_status(response, 400)
@@ -40,7 +40,7 @@ class TestUserRegister(BaseCase):
         incorrect_email = 'vinkotovexample.com'
         data = self.prepare_registration_data(incorrect_email)
 
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
 
         # Проверка на некорректный email
         Assertions.assert_code_status(response, 400)
@@ -52,7 +52,7 @@ class TestUserRegister(BaseCase):
         data = self.prepare_registration_data()
         del data[f"{missed_field}"]
 
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
 
         # Проверка на отсутствие одного из требуемых полей
         Assertions.assert_code_status(response, 400)
@@ -63,7 +63,7 @@ class TestUserRegister(BaseCase):
         data = self.prepare_registration_data()
         data['username'] = 'u'
 
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
 
         # Проверка на очень короткий username
         Assertions.assert_code_status(response, 400)
@@ -77,7 +77,7 @@ class TestUserRegister(BaseCase):
         data = self.prepare_registration_data()
         data["username"] = random_string
 
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
 
         # Проверка на очень длинный username
         Assertions.assert_code_status(response, 400)
