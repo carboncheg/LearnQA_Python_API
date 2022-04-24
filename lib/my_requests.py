@@ -2,7 +2,7 @@ import requests
 from lib.logger import Logger
 
 
-class MyRequests():
+class MyRequests:
     @staticmethod
     def get(url: str, data: dict = None, headers: dict = None, cookies: dict = None):
         return MyRequests._send(url, data, headers, cookies, 'GET')
