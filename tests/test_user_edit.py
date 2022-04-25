@@ -19,7 +19,7 @@ class TestUserEdit(BaseCase):
         password_1 = register_data_1['password']
         user_id_1 = self.get_json_value(response_register_1, 'id')
 
-        # LOGIN USER 1
+        # LOGIN AS USER 1
         login_data = {
             'email': email_1,
             'password': password_1
@@ -143,7 +143,7 @@ class TestUserEdit(BaseCase):
         password_4 = registration_data_4['password']
         user_id_4 = self.get_json_value(response_register_4, "id")
 
-        # LOGIN USER 4
+        # LOGIN AS USER 4
         login_data = {
             'email': email_4,
             'password': password_4
@@ -152,7 +152,7 @@ class TestUserEdit(BaseCase):
         token_4 = self.get_header(response_login_4, "x-csrf-token")
         auth_sid_4 = self.get_cookie(response_login_4, "auth_sid")
 
-        # EDIT
+        # EDIT USER 4
         new_email = "incorrect_email.com"
 
         response3 = MyRequests.put(
@@ -178,7 +178,7 @@ class TestUserEdit(BaseCase):
         password_6 = registration_data_5['password']
         user_id_6 = self.get_json_value(response_register_5, "id")
 
-        # LOGIN USER 5
+        # LOGIN AS USER 5
         login_data = {
             'email': email_5,
             'password': password_6
