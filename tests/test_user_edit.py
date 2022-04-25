@@ -63,7 +63,7 @@ class TestUserEdit(BaseCase):
     def test_edit_not_auth_user(self):
 
         # EDIT USER 1
-        with allure.step(f"Try to edit first name of user with id=2 to {self.new_name}"):
+        with allure.step(f"Try to edit first name of user with id=2 to '{self.new_name}'"):
             response_edit_1 = MyRequests.put(
                 "/user/2",
                 data={"firstName": self.new_name}

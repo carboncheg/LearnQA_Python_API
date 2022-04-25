@@ -24,6 +24,7 @@ class TestUserAuth(BaseCase):
 
     @allure.description('This test successfully authorize by email and password')
     def test_auth_user(self):
+
         with allure.step("Authorize as existing user"):
             response_2 = MyRequests.get(
                 '/user/auth',

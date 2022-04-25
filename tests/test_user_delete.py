@@ -33,7 +33,7 @@ class TestUserDelete(BaseCase):
     def test_delete_user_successfully(self):
 
         # REGISTER
-        with allure.step("Register new generated user"):
+        with allure.step("Register new user"):
             response_1, registration_data = self.generate_new_user()
 
         Assertions.assert_code_status(response_1, 200)
@@ -78,7 +78,7 @@ class TestUserDelete(BaseCase):
     def test_delete_user_auth_as_another_user(self):
 
         # REGISTER USER 1
-        with allure.step("Register new generated user 1"):
+        with allure.step("Register user 1"):
             response_1, registration_data_1 = self.generate_new_user()
 
         Assertions.assert_code_status(response_1, 200)
@@ -88,7 +88,7 @@ class TestUserDelete(BaseCase):
         password_1 = registration_data_1['password']
 
         # REGISTER USER 2
-        with allure.step("Register new generated user 2"):
+        with allure.step("Register user 2"):
             response_2, registration_data_2 = self.generate_new_user()
 
         Assertions.assert_code_status(response_2, 200)
