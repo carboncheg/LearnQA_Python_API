@@ -2,16 +2,10 @@ import allure
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
-from requests import Response
-from typing import Tuple
 
 
 @allure.epic("User deleting cases")
 class TestUserDelete(BaseCase):
-
-    def generate_new_user(self) -> Tuple[Response, dict]:
-        user_data = self.prepare_registration_data()
-        return MyRequests.post('/user', data=user_data), user_data
 
     @allure.description("This test checks authorized protected user cannot delete himself")
     def test_delete_protected_user(self):

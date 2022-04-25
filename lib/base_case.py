@@ -1,6 +1,8 @@
 import json.decoder
 from requests import Response
+from lib.my_requests import MyRequests
 from datetime import datetime
+from typing import Tuple
 
 
 class BaseCase:
@@ -34,3 +36,7 @@ class BaseCase:
             'lastName': 'learnqa',
             'email': email
         }
+
+    def generate_new_user(self) -> Tuple[Response, dict]:
+        user_data = self.prepare_registration_data()
+        return MyRequests.post('/user', data=user_data), user_data

@@ -24,11 +24,12 @@ class TestUserAuth(BaseCase):
 
     @allure.description('This test successfully authorize by email and password')
     def test_auth_user(self):
-        response_2 = MyRequests.get(
-            '/user/auth',
-            headers={'x-csrf-token': self.token},
-            cookies={'auth_sid': self.auth_sid}
-        )
+        with allure.step("Authorize as existing user"):
+            response_2 = MyRequests.get(
+                '/user/auth',
+                headers={'x-csrf-token': self.token},
+                cookies={'auth_sid': self.auth_sid}
+            )
 
         Assertions.assert_json_value_by_name(
             response_2,
@@ -42,15 +43,17 @@ class TestUserAuth(BaseCase):
     def test_negative_auth_check(self, condition):
 
         if condition == 'no_cookie':
-            response_2 = MyRequests.get(
-                '/user/auth',
-                headers={'x-csrf-token': self.token}
-            )
+            with allure.step("Try to authorize user w/o cookies"):
+                response_2 = MyRequests.get(
+                    '/user/auth',
+                    headers={'x-csrf-token': self.token}
+                )
         else:
-            response_2 = MyRequests.get(
-                '/user/auth',
-                cookies={'auth_sid': self.auth_sid}
-            )
+            with allure.step("Try to authorize user w/o token"):
+                response_2 = MyRequests.get(
+                    '/user/auth',
+                    cookies={'auth_sid': self.auth_sid}
+                )
 
         Assertions.assert_json_value_by_name(
             response_2,
